@@ -1,3 +1,3 @@
-module github.com/directionless/pgerrors-go
+module github.com/directionless/go-pgerrors
 
-go 1.21.4
+go 1.21
