@@ -1,1 +1,1 @@
-pgerrors-go
+# go-pgerrors
