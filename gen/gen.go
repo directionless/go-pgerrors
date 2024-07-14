@@ -7,6 +7,7 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"sort"
 	"strings"
 	"time"
 )
@@ -85,10 +86,17 @@ func outputLookupSqlCode(ctx context.Context, filename string, pgErrors map[stri
 		os.Exit(1)
 	}
 
+	keys := make([]string, 0, len(pgErrors))
+
+	for k := range pgErrors {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
 	fmt.Fprintf(out, "func LookupSqlCode(sqlcode string) string {\n")
 	fmt.Fprintf(out, "switch sqlcode {\n")
-	for sqlcode, pgErr := range pgErrors {
-		fmt.Fprintf(out, "case `%s`: return `%s`\n", sqlcode, pgErr.Name())
+	for _, sqlcode := range keys {
+		fmt.Fprintf(out, "case `%s`: return `%s`\n", sqlcode, pgErrors[sqlcode].Name())
 	}
 	fmt.Fprintf(out, "default:\n")
 	fmt.Fprintf(out, "return ``\n")

@@ -3,6 +3,9 @@ package main
 import (
 	"regexp"
 	"strings"
+
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 )
 
 // # The format of this file is one error code per line, with the following
@@ -18,6 +21,8 @@ import (
 // # SGML list. The last field is optional, if not present the PL/pgSQL condition
 // # and the SGML entry will not be generated.
 var lineRe = regexp.MustCompile(`^(\w{5})\s+(.)\s+(\w+)\s*(\w+)?`)
+
+var caser = cases.Title(language.AmericanEnglish)
 
 func newPgError(line string) (pgErrType, bool) {
 	m := lineRe.FindStringSubmatch(line)
@@ -43,7 +48,7 @@ func newPgError(line string) (pgErrType, bool) {
 		pe.spec_name += " warning"
 	}
 
-	pe.name = strings.ReplaceAll(strings.Title(strings.ReplaceAll(pe.spec_name, "_", " ")), " ", "")
+	pe.name = strings.ReplaceAll(caser.String(strings.ReplaceAll(pe.spec_name, "_", " ")), " ", "")
 
 	return pe, true
 }
